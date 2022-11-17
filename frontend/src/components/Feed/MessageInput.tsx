@@ -1,17 +1,18 @@
 import {
   Flex,
+  Icon,
+  IconButton,
+  Input,
   InputGroup,
   InputLeftElement,
-  Icon,
-  Input,
   InputRightElement,
-  IconButton,
   Text,
 } from "@chakra-ui/react";
 import EmojiPicker from "emoji-picker-react";
-import React, { FormEvent, Ref, useContext, useEffect, useState } from "react";
+import React, { FormEvent, useContext, useEffect, useState } from "react";
 import { MdAttachFile, MdEmojiEmotions, MdSend } from "react-icons/md";
-import { Chat } from "../../atoms/chat";
+import { Chat } from "../../context/Chat/Chat";
+
 import SocketContext from "../../context/Socket/Socket";
 import useMessage from "../../hooks/useMessage";
 
@@ -30,7 +31,7 @@ const MessageInput: React.FunctionComponent<IMessageInputProps> = ({
   const [typing, setTyping] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 
-  const { setMessageState } = useMessage();
+  const { newMessage } = useMessage();
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text && text === "") {
@@ -39,10 +40,7 @@ const MessageInput: React.FunctionComponent<IMessageInputProps> = ({
     socket?.emit("send_message", { text: text, chat }, (response: any) => {
       const message = response.message;
 
-      setMessageState((prev) => ({
-        ...prev,
-        messages: [...prev.messages, message],
-      }));
+      newMessage(message);
 
       scrollToBottom();
 

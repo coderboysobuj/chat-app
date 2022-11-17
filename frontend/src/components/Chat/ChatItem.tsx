@@ -1,24 +1,26 @@
 import {
+  Avatar,
+  Badge,
   Flex,
   Stack,
-  Avatar,
   Text,
   useColorMode,
-  Badge,
 } from "@chakra-ui/react";
 import React from "react";
-import { Session } from "../../atoms/auth";
-import { Chat } from "../../atoms/chat";
+import { Session } from "../../context/Auth/Auth";
+
+import { Chat } from "../../context/Chat/Chat";
+
 import useAuth from "../../hooks/useAuth";
-import useChat from "../../hooks/useChat";
+import useChatUpdated from "../../hooks/useChatUpdated";
 import { getName } from "../../utils/functions";
 interface IChatItemProps {
   chat: Chat;
 }
 const ChatItem: React.FunctionComponent<IChatItemProps> = ({ chat }) => {
   const { colorMode } = useColorMode();
-  const { authStateValue } = useAuth();
-  const { setChatStateValue } = useChat();
+  const { session } = useAuth();
+  const { setSelectedChat } = useChatUpdated();
 
   return (
     <Flex
@@ -32,22 +34,20 @@ const ChatItem: React.FunctionComponent<IChatItemProps> = ({ chat }) => {
       cursor="pointer"
       boxShadow="sm"
       borderRadius="md"
-      onClick={() =>
-        setChatStateValue((prev) => ({ ...prev, selectedChat: chat }))
-      }
+      onClick={() => setSelectedChat(chat)}
     >
       <Stack direction="row" align="center">
         <Avatar name="Sobuj khan" />
         {chat.lastMessage ? (
           <Flex direction="column">
             <Text fontSize="md" fontWeight="semibold">
-              {getName(chat, authStateValue.session as Session)}
+              {getName(chat, session as Session)}
             </Text>
             <Text fontWeight="thin">{chat.lastMessage}</Text>
           </Flex>
         ) : (
           <Text fontSize="md" fontWeight="semibold">
-            {getName(chat, authStateValue.session as Session)}
+            {getName(chat, session as Session)}
           </Text>
         )}
       </Stack>

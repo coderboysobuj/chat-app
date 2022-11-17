@@ -6,7 +6,7 @@ import { Center, Spinner } from "@chakra-ui/react";
 
 const Persist = () => {
   const refresh = useRefresh();
-  const { authStateValue } = useAuth();
+  const { session } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -19,9 +19,7 @@ const Persist = () => {
       }
     };
 
-    !authStateValue.session?.accessToken
-      ? verifyRefreshToken()
-      : setLoading(false);
+    !session?.accessToken ? verifyRefreshToken() : setLoading(false);
   }, []);
 
   return (

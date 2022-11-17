@@ -6,13 +6,13 @@ import useRefresh from "./useRefresh";
 
 const useAxios = () => {
   const refresh = useRefresh();
-  const { authStateValue } = useAuth();
+  const { session } = useAuth();
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config: AxiosRequestConfig) => {
         if (config.headers && !config.headers?.authorization) {
-          config.headers.authorization = `Bearer ${authStateValue.session?.accessToken}`;
+          config.headers.authorization = `Bearer ${session?.accessToken}`;
         }
         return config;
       },
@@ -36,7 +36,7 @@ const useAxios = () => {
       axiosPrivate.interceptors.response.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [authStateValue, refresh]);
+  }, [session, refresh]);
 
   return axiosPrivate;
 };

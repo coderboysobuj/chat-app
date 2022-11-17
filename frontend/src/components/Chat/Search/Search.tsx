@@ -18,13 +18,15 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-import React, { FormEvent, useState } from "react";
-import { User } from "../../../atoms/auth";
-import useAxios from "../../../hooks/useAxios";
-import { MdClose } from "react-icons/md";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { Chat, chatState } from "../../../atoms/chat";
+import { MdClose } from "react-icons/md";
+
+import useAxios from "../../../hooks/useAxios";
+
+import { Chat } from "../../../context/Chat/Chat";
+import useChatUpdated from "../../../hooks/useChatUpdated";
+import { User } from "../../../context/Auth/Auth";
 
 interface ISearchProps {
   isOpen: boolean;
@@ -38,8 +40,8 @@ const SearchModal: React.FC<ISearchProps> = ({ isOpen, onClose }) => {
   const [creating, setCreating] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const axios = useAxios();
-  const [state, setChatState] = useRecoilState(chatState);
   const { colorMode } = useColorMode();
+  const { addNewChat } = useChatUpdated();
 
   const searchUsers = async () => {
     if (!input) return;
@@ -74,8 +76,10 @@ const SearchModal: React.FC<ISearchProps> = ({ isOpen, onClose }) => {
       const newChat: Chat = {
         id: data.id,
         users: data.users,
+        updatedAt: data.updatedAt,
+        lastMessage: data.lastMessage,
       };
-      setChatState((prev) => ({ ...prev, chats: [newChat, ...prev.chats] }));
+      addNewChat(newChat);
       onClose();
       setSelectedUsers([]);
       setInput("");

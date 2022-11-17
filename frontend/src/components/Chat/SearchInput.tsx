@@ -1,25 +1,22 @@
 import {
-  InputGroup,
-  InputLeftElement,
+  Avatar,
+  Box,
+  Flex,
   Icon,
   Input,
+  InputGroup,
+  InputLeftElement,
   InputRightElement,
-  Box,
+  Skeleton,
   Stack,
-  HStack,
-  Flex,
-  Avatar,
   Text,
   useColorMode,
-  VStack,
-  Skeleton,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { MdSearch, MdFilter, MdFilter1, MdSort } from "react-icons/md";
-import { useRecoilState } from "recoil";
-import { User } from "../../atoms/auth";
-import { Chat, chatState } from "../../atoms/chat";
+import { MdSearch, MdSort } from "react-icons/md";
+import { User } from "../../context/Auth/Auth";
+
 import useAxios from "../../hooks/useAxios";
 
 const SearchInput: React.FunctionComponent = () => {
@@ -31,7 +28,6 @@ const SearchInput: React.FunctionComponent = () => {
   const [creating, setCreating] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const axios = useAxios();
-  const [state, setChatState] = useRecoilState(chatState);
 
   useEffect(() => {
     if (!input) {
@@ -69,12 +65,7 @@ const SearchInput: React.FunctionComponent = () => {
       const { data } = await axios.post("api/chat/create", {
         users: selectedUsers,
       });
-      const newChat: Chat = {
-        id: data.id,
-        users: data.users,
-      };
-      setChatState((prev) => ({ ...prev, chats: [newChat, ...prev.chats] }));
-      setSelectedUsers([]);
+
       setInput("");
     } catch (error: any) {
       if (!error?.response) {

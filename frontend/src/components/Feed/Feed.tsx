@@ -8,17 +8,20 @@ import {
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import toast from "react-hot-toast";
 import { FiInfo } from "react-icons/fi";
 import { MdArrowBack } from "react-icons/md";
-import { Session } from "../../atoms/auth";
-import { Chat } from "../../atoms/chat";
+import { Session } from "../../context/Auth/Auth";
+
+import { Chat } from "../../context/Chat/Chat";
+
 import SocketContext from "../../context/Socket/Socket";
 import useAuth from "../../hooks/useAuth";
 import useAxios from "../../hooks/useAxios";
-import useChat from "../../hooks/useChat";
+
+import useChatUpdated from "../../hooks/useChatUpdated";
 import useMessage from "../../hooks/useMessage";
 import { getName } from "../../utils/functions";
 import Item from "./Item";
@@ -26,13 +29,13 @@ import MessageInput from "./MessageInput";
 
 const Feed: React.FunctionComponent = () => {
   const { colorMode } = useColorMode();
-  const { chatStateValue, setChatStateValue } = useChat();
-  const { authStateValue } = useAuth();
-  const axios = useAxios();
-  const { messageState, setMessageState } = useMessage();
-  const { socket } = useContext(SocketContext).SocketState;
+  const { chatState, unsetSelectedChat } = useChatUpdated();
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const { session } = useAuth();
+  const axios = useAxios();
+  const { messages, setMessages, newMessage } = useMessage();
+  const { socket } = useContext(SocketContext).SocketState;
+  const [loading, setLoading] = useState<boolean>(false);
   const viewRef = useRef<HTMLDivElement>(null);
 
   const scrollTobottom = () => {
@@ -44,26 +47,26 @@ const Feed: React.FunctionComponent = () => {
 
   useEffect(() => {
     const getMessage = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
-          `/api/message/${chatStateValue?.selectedChat?.id}`
+          `/api/message/${chatState?.selectedChat?.id}`
         );
-        setMessageState({ messages: [...response.data] });
+        setMessages([...response.data]);
       } catch (error: any) {
         toast.error("Fail to get message");
+      } finally {
+        setLoading(false);
       }
     };
     getMessage();
 
     scrollTobottom();
-  }, [chatStateValue.selectedChat]);
+  }, [chatState.selectedChat]);
 
   useEffect(() => {
     socket?.on("reverse_message", ({ message }) => {
-      setMessageState((prev) => ({
-        ...prev,
-        messages: [...prev.messages, message],
-      }));
+      newMessage(message);
       scrollTobottom();
     });
     return () => {
@@ -76,7 +79,7 @@ const Feed: React.FunctionComponent = () => {
       direction="column"
       justify="space-between"
       display={{
-        base: chatStateValue.selectedChat ? "flex" : "none",
+        base: chatState.selectedChat ? "flex" : "none",
         md: "flex",
       }}
       height="100vh"
@@ -90,25 +93,19 @@ const Feed: React.FunctionComponent = () => {
             <IconButton
               display={{ md: "none" }}
               onClick={() => {
-                setChatStateValue((prev) => ({ ...prev, selectedChat: null }));
+                unsetSelectedChat();
               }}
               aria-label="go-back"
               icon={<Icon fontSize="2xl" as={MdArrowBack} />}
             />
             <Avatar
-              name={getName(
-                chatStateValue.selectedChat as Chat,
-                authStateValue.session as Session
-              )}
+              name={getName(chatState.selectedChat as Chat, session as Session)}
             />
           </Flex>
 
           <Flex direction="column" gap={0}>
             <Text fontWeight="semibold">
-              {getName(
-                chatStateValue.selectedChat as Chat,
-                authStateValue.session as Session
-              )}
+              {getName(chatState.selectedChat as Chat, session as Session)}
             </Text>
             <Text fontWeight="light">Online</Text>
           </Flex>
@@ -140,19 +137,19 @@ const Feed: React.FunctionComponent = () => {
         ref={viewRef}
       >
         <Stack spacing={2}>
-          {messageState.messages.map((item) => (
-            <Item
-              key={item.id}
-              message={item}
-              session={authStateValue.session as Session}
-            />
-          ))}
+          {loading ? (
+            <Text>Loading...</Text>
+          ) : (
+            messages.map((item) => (
+              <Item key={item.id} message={item} session={session as Session} />
+            ))
+          )}
           <div style={{ paddingBottom: "70px" }}></div>
         </Stack>
       </Box>
       <MessageInput
         scrollToBottom={scrollTobottom}
-        chat={chatStateValue.selectedChat as Chat}
+        chat={chatState.selectedChat as Chat}
       />
     </Flex>
   );

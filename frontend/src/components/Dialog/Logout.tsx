@@ -7,12 +7,12 @@ import { publicRequest } from "../../utils/axios";
 interface ILogutDiologProps extends PropsWithChildren {}
 
 const Logout: React.FC<ILogutDiologProps> = ({ children }) => {
-  const { setAuthStateValue } = useAuth();
+  const { unsetAuth } = useAuth();
   const navigate = useNavigate();
   const onLogout = async () => {
     try {
       await publicRequest.post("/api/auth/logout");
-      setAuthStateValue({ session: null });
+      unsetAuth();
       navigate("/login");
       toast.success("You are logged out, login again to access the app");
     } catch (error: any) {

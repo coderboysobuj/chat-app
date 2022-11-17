@@ -17,7 +17,7 @@ const Register: React.FunctionComponent = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const { setAuthStateValue } = useAuth();
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,11 +31,9 @@ const Register: React.FunctionComponent = () => {
         password,
       });
       toast.success(response.data.message);
-      setAuthStateValue({
-        session: {
-          accessToken: response.data.accessToken,
-          user: response.data.user,
-        },
+      setAuth({
+        accessToken: response.data.accessToken,
+        user: response.data.user,
       });
       navigate("/app");
     } catch (error: any) {

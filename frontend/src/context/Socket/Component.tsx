@@ -24,7 +24,7 @@ const SocketContextComponent: React.FunctionComponent<
     defaultSocketContextState
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const { setAuthStateValue } = useAuth();
+  const { unsetAuth } = useAuth();
   const axios = useAxios();
   const navigate = useNavigate();
   const socket = useSocket();
@@ -36,11 +36,11 @@ const SocketContextComponent: React.FunctionComponent<
       axios
         .post("/api/auth/logout")
         .then(() => {
-          setAuthStateValue({ session: null });
+          unsetAuth();
           navigate("/login");
         })
         .catch(() => {
-          setAuthStateValue({ session: null });
+          unsetAuth();
           navigate("/login");
         });
     });

@@ -1,15 +1,10 @@
 import {
-  Avatar,
   Box,
   Button,
   Divider,
   Flex,
   Icon,
   IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
   MenuButton,
   Skeleton,
   Stack,
@@ -18,52 +13,57 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { MdMenuOpen, MdAdd, MdFilter, MdArchive } from "react-icons/md";
-import { useRecoilValue } from "recoil";
-import socketState from "../../atoms/socket";
+import { MdAdd, MdMenuOpen } from "react-icons/md";
+import { Chat } from "../../context/Chat/Chat";
+
 import SocketContext from "../../context/Socket/Socket";
 import useAxios from "../../hooks/useAxios";
-import useChat from "../../hooks/useChat";
+import useChatUpdated from "../../hooks/useChatUpdated";
 import Logout from "../Dialog/Logout";
 import ChatItem from "./ChatItem";
 import SearchModal from "./Search/Search";
 import SearchInput from "./SearchInput";
 
-const Chat: React.FC = () => {
+const ChatWrapper: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const onClose = () => setIsOpen(false);
   const { colorMode } = useColorMode();
-  const { chatStateValue, setChatStateValue } = useChat();
+
   const axios = useAxios();
   const { socket } = useContext(SocketContext).SocketState;
 
+  const { chatState, setAllChat, addNewChat } = useChatUpdated();
+
   useEffect(() => {
-    setLoading(true);
     const getChats = async () => {
+      setLoading(true);
       try {
         const { data } = await axios.get("/api/chat");
-        setChatStateValue((prev) => ({ ...prev, chats: data }));
+        setAllChat(data);
       } catch (error) {
         toast.error("something went wrong");
       } finally {
         setLoading(false);
       }
     };
-
     getChats();
-
-    return () => {};
   }, []);
 
   useEffect(() => {
     socket?.on("new_chat", (payload) => {
-      console.log(payload);
-      setChatStateValue((prev) => ({
-        ...prev,
-        chats: [payload, ...prev.chats],
-      }));
+      const chat: Chat = {
+        id: payload.id,
+        users: payload.users,
+        updatedAt: payload.updatedAt,
+        createdAt: payload.createdAt,
+        lastMessage: payload.lastMessage,
+      };
+
+      addNewChat(chat);
+      console.log("new chat here");
     });
+
     socket?.on("update_chat", ({ chat }) => {
       console.log("We have to upadate chat list with letest message");
     });
@@ -72,6 +72,7 @@ const Chat: React.FC = () => {
       socket?.off("update_chat");
     };
   }, [socket]);
+
   return (
     <>
       <Box
@@ -82,7 +83,7 @@ const Chat: React.FC = () => {
         px={2}
         py={4}
         display={{
-          base: chatStateValue.selectedChat ? "none" : "unset",
+          base: chatState.selectedChat ? "none" : "unset",
           md: "unset",
         }}
       >
@@ -134,8 +135,14 @@ const Chat: React.FC = () => {
                 All Chats
               </Text>
               <Stack>
-                {chatStateValue.chats?.length
-                  ? chatStateValue.chats?.map((item) => (
+                {loading
+                  ? [0, 1, 2].map((i) => (
+                      <Skeleton key={`chatlist:${i}`}>
+                        <Box height="50px"></Box>
+                      </Skeleton>
+                    ))
+                  : chatState.chats.length
+                  ? chatState.chats.map((item) => (
                       <ChatItem chat={item} key={item.id} />
                     ))
                   : null}
@@ -149,4 +156,4 @@ const Chat: React.FC = () => {
   );
 };
 
-export default Chat;
+export default ChatWrapper;

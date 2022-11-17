@@ -16,7 +16,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const { setAuthStateValue } = useAuth();
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,11 +27,9 @@ const Login: React.FC = () => {
         password,
       });
       toast.success(response.data.message);
-      setAuthStateValue({
-        session: {
-          accessToken: response.data.accessToken,
-          user: response.data.user,
-        },
+      setAuth({
+        accessToken: response.data.accessToken,
+        user: response.data.user,
       });
       navigate("/app");
     } catch (error: any) {

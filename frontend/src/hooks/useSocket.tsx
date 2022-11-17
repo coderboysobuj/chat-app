@@ -5,12 +5,12 @@ import useAuth from "./useAuth";
 import { io } from "socket.io-client";
 
 const useSocket = (): Socket => {
-  const { authStateValue } = useAuth();
+  const { session } = useAuth();
   const { current: socket } = useRef(
     io(import.meta.env.VITE_SERVER_URL, {
       withCredentials: true,
       auth: {
-        token: `Bearer ${authStateValue.session?.accessToken}`,
+        token: `Bearer ${session?.accessToken}`,
       },
       autoConnect: false,
     })

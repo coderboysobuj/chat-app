@@ -8,9 +8,9 @@ import {
 
 export interface IChatContextComponentProps extends PropsWithChildren {}
 
-const SocketContextComponent: React.FunctionComponent<
-  IChatContextComponentProps
-> = ({ children }) => {
+const ChatComponent: React.FunctionComponent<IChatContextComponentProps> = ({
+  children,
+}) => {
   const [ChatState, ChatDispatch] = useReducer(
     ChatReducer,
     defaultChatContextState
@@ -22,4 +22,4 @@ const SocketContextComponent: React.FunctionComponent<
   );
 };
 
-export default SocketContextComponent;
+export default ChatComponent;

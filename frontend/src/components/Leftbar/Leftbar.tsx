@@ -20,7 +20,7 @@ import LogoutDialog from "../Dialog/Logout";
 import { FaMoon, FaSun } from "react-icons/fa";
 
 const Leftbar: React.FC = () => {
-  const { authStateValue } = useAuth();
+  const { session } = useAuth();
   const { colorMode, setColorMode } = useColorMode();
   const cancelRef = useRef<null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -81,7 +81,7 @@ const Leftbar: React.FC = () => {
                 cursor="pointer"
                 onClick={() => setIsOpen(true)}
                 size="sm"
-                name={authStateValue.session?.user.username}
+                name={session?.user.username}
               />
             </LogoutDialog>
           </Stack>

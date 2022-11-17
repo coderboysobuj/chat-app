@@ -13,11 +13,11 @@ import LoginComponent from "../components/Login/Login";
 import Register from "../components/Login/Register";
 import useAuth from "../hooks/useAuth";
 const Login: React.FunctionComponent = () => {
-  const { authStateValue } = useAuth();
+  const { session } = useAuth();
 
   return (
     <>
-      {authStateValue.session?.accessToken ? (
+      {session?.accessToken ? (
         <Navigate to="/app" />
       ) : (
         <Center height="100vh">
