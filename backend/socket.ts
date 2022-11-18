@@ -16,8 +16,8 @@ export class SocketServer {
 
     this.io = new Server(server, {
       cors: {
-        origin: "*",
-        credentials: true,
+        origin: "https://chat-app-frontend.onrender.com",
+        methods: ["GET", "POST"],
       },
     });
 

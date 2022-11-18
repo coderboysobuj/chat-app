@@ -8,7 +8,6 @@ const useSocket = (): Socket => {
   const { session } = useAuth();
   const { current: socket } = useRef(
     io(import.meta.env.VITE_SERVER_URL, {
-      withCredentials: true,
       auth: {
         token: `Bearer ${session?.accessToken}`,
       },
