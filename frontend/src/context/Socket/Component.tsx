@@ -29,7 +29,7 @@ const SocketContextComponent: React.FunctionComponent<
   const navigate = useNavigate();
   const socket = useSocket();
   useEffect(() => {
-    // socket.connect();
+    socket.connect();
     console.log("Connecting....");
     SocketDispatch({ type: "update_socket", payload: socket });
 
