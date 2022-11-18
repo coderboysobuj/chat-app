@@ -29,22 +29,23 @@ const SocketContextComponent: React.FunctionComponent<
   const navigate = useNavigate();
   const socket = useSocket();
   useEffect(() => {
-    socket.connect();
+    // socket.connect();
+    console.log("Connecting....");
     SocketDispatch({ type: "update_socket", payload: socket });
 
-    socket.on("connect_error", () => {
-      console.log("Socket Connection fail");
-      axios
-        .post("/api/auth/logout")
-        .then(() => {
-          unsetAuth();
-          navigate("/login");
-        })
-        .catch(() => {
-          unsetAuth();
-          navigate("/login");
-        });
-    });
+    // socket.on("connect_error", () => {
+    //   console.log("Socket Connection fail");
+    //   axios
+    //     .post("/api/auth/logout")
+    //     .then(() => {
+    //       unsetAuth();
+    //       navigate("/login");
+    //     })
+    //     .catch(() => {
+    //       unsetAuth();
+    //       navigate("/login");
+    //     });
+    // });
     setLoading(false);
     return () => {
       socket.off("connect_error");
