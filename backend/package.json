@@ -1,11 +1,12 @@
 {
-  "name": "techNotes-api",
+  "name": "chat-application",
   "version": "1.0.0",
   "description": "techNotes MERN Project",
   "main": "server.ts",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "node ./dist/server",
+    "dev": "nodemon server",
+    "build": "tsc --project ."
   },
   "keywords": [],
   "author": "",

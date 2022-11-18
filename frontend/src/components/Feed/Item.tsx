@@ -1,8 +1,8 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 
 import React from "react";
-import { Session } from "../../atoms/auth";
-import { Message } from "../../atoms/message";
+import { Session } from "../../context/Auth/Auth";
+import { Message } from "../../context/Message/Message";
 
 interface IItemProps {
   message: Message;

@@ -1,6 +1,5 @@
 import { io } from "socket.io-client";
-
-import { Session } from "../atoms/auth";
+import { Session } from "../context/Auth/Auth";
 
 const socket = (session: Session) =>
   io("http://localhost:5000", {
