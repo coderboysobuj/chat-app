@@ -33,6 +33,7 @@ const SocketContextComponent: React.FunctionComponent<
     SocketDispatch({ type: "update_socket", payload: socket });
 
     socket.on("connect_error", () => {
+      console.log("Socket Connection fail");
       axios
         .post("/api/auth/logout")
         .then(() => {
