@@ -16,7 +16,7 @@ export class SocketServer {
 
     this.io = new Server(server, {
       cors: {
-        origin: process.env.CLIENT_URL as string,
+        origin: "*",
         credentials: true,
       },
     });

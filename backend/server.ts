@@ -7,7 +7,6 @@ import path from "path";
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Server } from "socket.io";
 import http from "http";
 import routes from "./routes/root";
 import logger from "./middleware/logger";
@@ -15,8 +14,9 @@ import errorHandler from "./middleware/errorHandler";
 import corsOptions from "./config/corsOptions";
 import { authRoutes, userRoutes, chatRoutes, messageRoutes } from "./routes";
 import { User } from "./utils/types";
-import { authencate } from "./middleware/socketMiddleware";
 import { SocketServer } from "./socket";
+
+console.log(process.env.CLIENT_URL);
 
 declare module "express-serve-static-core" {
   interface Request {
