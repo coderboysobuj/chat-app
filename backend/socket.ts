@@ -1,5 +1,7 @@
 import { Server as HttpServer } from "http";
 import { Server, Socket } from "socket.io";
+import * as dotenv from "dotenv";
+dotenv.config();
 import { authencate } from "./middleware/socketMiddleware";
 
 import prisma from "./utils/prisma";

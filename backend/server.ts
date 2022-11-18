@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 console.log(process.env.NODE_ENV);
+console.log(process.env.CLIENT_URL);
 
 import path from "path";
 import express, { Request, Response } from "express";
